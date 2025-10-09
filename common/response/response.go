@@ -17,7 +17,7 @@ type Response struct {
 
 type ParamHTTPResponse struct {
 	Code    int
-	Err   error
+	Err     error
 	Message *string
 	Gin     *gin.Context
 	Data    interface{}
