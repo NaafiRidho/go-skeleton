@@ -63,7 +63,7 @@ func (s *UserService) Login(ctx context.Context, req *dto.LoginRequest) (*dto.Lo
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(config.Config.JwtSectetKey))
+	tokenString, err := token.SignedString([]byte(config.Config.JwtSecretKey))
 	if err != nil {
 		return nil, err
 	}

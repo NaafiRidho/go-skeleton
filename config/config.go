@@ -1,9 +1,9 @@
 package config
 
 import (
+	"github.com/sirupsen/logrus"
 	"os"
 	"user-service/common/utils"
-	"github.com/sirupsen/logrus"
 )
 
 var Config AppConfig
@@ -12,11 +12,11 @@ type AppConfig struct {
 	Port                  int      `json:"port"`
 	AppName               string   `json:"appName"`
 	AppKey                string   `json:"appKey"`
-	SigningKey            string   `json:"signingKey"`
+	SignatureKey          string   `json:"signatureKey"`
 	Database              Database `json:"database"`
 	RateLimiterMaxRequest float64  `json:"rateLimiterMaxRequest"`
 	RateLimiterTimeSecond int      `json:"rateLimiterTimeSecond"`
-	JwtSectetKey          string   `json:"jwtSecret"`
+	JwtSecretKey          string   `json:"jwtSecret"`
 	JwtExpireTime         int      `json:"jwtExpireTime"`
 }
 type Database struct {
