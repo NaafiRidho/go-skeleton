@@ -45,6 +45,7 @@ func RateLimit(lmt *limiter.Limiter) gin.HandlerFunc {
 				Message: errConstant.ErrToManyRequest.Error(),
 			})
 			c.Abort()
+			return 
 		}
 		c.Next()
 	}

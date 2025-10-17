@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
+	"user-service/common/error"
 	"user-service/common/response"
 	"user-service/domain/dto"
 	"user-service/services"
-	"user-service/common/error"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -67,10 +67,10 @@ func (c *UserController) Login(ctx *gin.Context) {
 	}
 
 	response.HTTPResponse(response.ParamHTTPResponse{
-		Code: http.StatusOK,
-		Data: user.User,
+		Code:  http.StatusOK,
+		Data:  user.User,
 		Token: &user.Token,
-		Gin:  ctx,
+		Gin:   ctx,
 	})
 }
 

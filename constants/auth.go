@@ -3,6 +3,7 @@ package constants
 type ContextKey string
 
 const (
-	UserLogin = "UserLogin"
-	Token     = "token"
+	UserLogin ContextKey = "UserLogin"
+	Token     ContextKey = "token"
 )
+
