@@ -37,18 +37,25 @@ func HandlePanic() gin.HandlerFunc {
 }
 
 func RateLimit(lmt *limiter.Limiter) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		err := tollbooth.LimitByRequest(lmt, c.Writer, c.Request)
-		if err != nil {
-			c.JSON(http.StatusTooManyRequests, response.Response{
-				Status:  constants.Error,
-				Message: errConstant.ErrToManyRequest.Error(),
-			})
-			c.Abort()
-			return 
-		}
-		c.Next()
-	}
+    return func(c *gin.Context) {
+        // Disable rate limiter for localhost
+        if c.ClientIP() == "::1" || c.ClientIP() == "127.0.0.1" {
+            c.Next()
+            return
+        }
+
+        httpError := tollbooth.LimitByRequest(lmt, c.Writer, c.Request)
+        if httpError != nil {
+            c.JSON(http.StatusTooManyRequests, response.Response{
+                Status:  constants.Error,
+                Message: "Too many requests, please try again later",
+                Data:    nil,
+            })
+            c.Abort()
+            return
+        }
+        c.Next()
+    }
 }
 
 func extractBearerToken(token string) string {
