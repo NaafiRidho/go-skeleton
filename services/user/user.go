@@ -87,7 +87,7 @@ func (s *UserService) isUserNameExist(ctx context.Context, username string) bool
 }
 
 func (s *UserService) isEmailExist(ctx context.Context, email string) bool {
-	user, err := s.repository.GetUser().FindByUsername(ctx, email)
+	user, err := s.repository.GetUser().FindByEmail(ctx, email)
 	if err != nil {
 		return false
 	}
@@ -97,10 +97,12 @@ func (s *UserService) isEmailExist(ctx context.Context, email string) bool {
 	return false
 }
 func (s *UserService) Register(ctx context.Context, req *dto.RegisterRequest) (*dto.RegisterRespose, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
+	// cek password confirm dulu
+	if req.Password != req.ConfirmPassword {
+		return nil, errConstant.ErrPasswordDoesNotMatch
 	}
+
+	// cek username & email
 	if s.isUserNameExist(ctx, req.Username) {
 		return nil, errConstant.ErrUsernameExist
 	}
@@ -108,10 +110,13 @@ func (s *UserService) Register(ctx context.Context, req *dto.RegisterRequest) (*
 		return nil, errConstant.ErrEmailExist
 	}
 
-	if req.Password != req.ConfirmPassword {
-		return nil, errConstant.ErrPasswordDoesNotMatch
+	// hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
 	}
 
+	// register user
 	user, err := s.repository.GetUser().Register(ctx, &dto.RegisterRequest{
 		Name:        req.Name,
 		Username:    req.Username,
@@ -124,6 +129,7 @@ func (s *UserService) Register(ctx context.Context, req *dto.RegisterRequest) (*
 		return nil, err
 	}
 
+	// buat response
 	response := &dto.RegisterRespose{
 		User: dto.UserResponse{
 			UUID:        user.UUID,
@@ -131,8 +137,10 @@ func (s *UserService) Register(ctx context.Context, req *dto.RegisterRequest) (*
 			Username:    user.Username,
 			Email:       user.Email,
 			PhoneNumber: user.PhoneNumber,
+			Role:        user.Role.Name,
 		},
 	}
+
 	return response, nil
 }
 
@@ -227,6 +235,7 @@ func (s *UserService) GetUserByUUID(ctx context.Context, uuid string) (*dto.User
 		Username:    user.Username,
 		Email:       user.Email,
 		PhoneNumber: user.PhoneNumber,
+		Role:        user.Role.Name,
 	}
 	return data, nil
 }

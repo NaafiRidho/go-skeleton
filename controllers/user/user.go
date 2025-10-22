@@ -29,9 +29,7 @@ func NewUserController(userService services.IServiceRegistry) IUserController {
 
 func (c *UserController) Login(ctx *gin.Context) {
 	request := &dto.LoginRequest{}
-
-	err := ctx.ShouldBindJSON(request)
-	if err != nil {
+	if err := ctx.ShouldBindJSON(request); err != nil {
 		response.HTTPResponse(response.ParamHTTPResponse{
 			Code: http.StatusBadRequest,
 			Err:  err,
@@ -41,9 +39,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 	}
 
 	validate := validator.New()
-	err = validate.Struct(request)
-
-	if err != nil {
+	if err := validate.Struct(request); err != nil {
 		errMessages := http.StatusText(http.StatusUnprocessableEntity)
 		errResponse := error.ErrValidationResponse(err)
 		response.HTTPResponse(response.ParamHTTPResponse{
@@ -76,9 +72,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 
 func (c *UserController) Register(ctx *gin.Context) {
 	request := &dto.RegisterRequest{}
-
-	err := ctx.ShouldBindJSON(request)
-	if err != nil {
+	if err := ctx.ShouldBindJSON(request); err != nil {
 		response.HTTPResponse(response.ParamHTTPResponse{
 			Code: http.StatusBadRequest,
 			Err:  err,
@@ -88,9 +82,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 	}
 
 	validate := validator.New()
-	err = validate.Struct(request)
-
-	if err != nil {
+	if err := validate.Struct(request); err != nil {
 		errMessages := http.StatusText(http.StatusUnprocessableEntity)
 		errResponse := error.ErrValidationResponse(err)
 		response.HTTPResponse(response.ParamHTTPResponse{
@@ -105,6 +97,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 
 	user, err := c.userService.GetUser().Register(ctx, request)
 	if err != nil {
+		// kirim error satu kali
 		response.HTTPResponse(response.ParamHTTPResponse{
 			Code: http.StatusBadRequest,
 			Err:  err,
@@ -124,8 +117,7 @@ func (c *UserController) Update(ctx *gin.Context) {
 	request := &dto.UpdateUserRequest{}
 	uuid := ctx.Param("uuid")
 
-	err := ctx.ShouldBindJSON(request)
-	if err != nil {
+	if err := ctx.ShouldBindJSON(request); err != nil {
 		response.HTTPResponse(response.ParamHTTPResponse{
 			Code: http.StatusBadRequest,
 			Err:  err,
@@ -135,9 +127,7 @@ func (c *UserController) Update(ctx *gin.Context) {
 	}
 
 	validate := validator.New()
-	err = validate.Struct(request)
-
-	if err != nil {
+	if err := validate.Struct(request); err != nil {
 		errMessages := http.StatusText(http.StatusUnprocessableEntity)
 		errResponse := error.ErrValidationResponse(err)
 		response.HTTPResponse(response.ParamHTTPResponse{
@@ -177,6 +167,7 @@ func (c *UserController) GetUserLogin(ctx *gin.Context) {
 		})
 		return
 	}
+
 	response.HTTPResponse(response.ParamHTTPResponse{
 		Code: http.StatusOK,
 		Data: user,
@@ -194,6 +185,7 @@ func (c *UserController) GetUserByUUID(ctx *gin.Context) {
 		})
 		return
 	}
+
 	response.HTTPResponse(response.ParamHTTPResponse{
 		Code: http.StatusOK,
 		Data: user,

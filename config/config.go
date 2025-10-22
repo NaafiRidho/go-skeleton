@@ -19,6 +19,7 @@ type AppConfig struct {
 	JwtSecretKey          string   `json:"jwtSecret"`
 	JwtExpireTime         int      `json:"jwtExpireTime"`
 }
+
 type Database struct {
 	Host                  string `json:"host"`
 	Port                  int    `json:"port"`
