@@ -1,9 +1,35 @@
-name: booking-order-app # change this to your app name
+name: booking-order-app
+
 services:
-  user-service: # change this to your service name
-    container_name: user-service # change this to your service name
-    image: naafi280505/user-service:1 # change this to your image name
+  # PostgreSQL Service
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: user_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: handayani03
     ports:
-      - "8001:8001" # change this to your port
+      - "5433:5432"  # host:container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # User Service
+  user-service:
+    container_name: user-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
     env_file:
       - .env
+    volumes:
+      - ./config.json:/app/config.json  # ✅ mount config.json agar terbaca
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  postgres_data:
